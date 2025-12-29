@@ -1,0 +1,164 @@
+// Schema Prisma para NUTRA
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Subscription {
+  FREE
+  PRO
+  COACH
+}
+
+enum UserGoal {
+  WEIGHT_LOSS
+  MUSCLE_GAIN
+  MAINTENANCE
+  HEALTH_GENERAL
+}
+
+enum InputType {
+  TEXT
+  IMAGE
+  VOICE
+  BARCODE
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+}
+
+model User {
+  id              String       @id @default(uuid())
+  email           String       @unique
+  passwordHash    String
+  name            String?
+  subscription    Subscription @default(FREE)
+  goal            UserGoal     @default(HEALTH_GENERAL)
+  
+  // Metadata
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  lastLoginAt     DateTime?
+  
+  // Relations
+  foodEntries     FoodEntry[]
+  nutritionLogs   NutritionLog[]
+  userPreferences UserPreferences?
+  nutritionTargets NutritionTargets?
+  
+  @@index([email])
+}
+
+model UserPreferences {
+  id                    String   @id @default(uuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  dietaryRestrictions   String[] @default([])
+  allergies             String[] @default([])
+  preferredUnits        String   @default("metric") // metric, imperial
+  language              String   @default("es") // es, en
+  notificationsEnabled  Boolean  @default(true)
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model NutritionTargets {
+  id                  String   @id @default(uuid())
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  dailyCalories       Int
+  proteinGrams        Float
+  carbsGrams          Float
+  fatGrams            Float
+  
+  // Micros opcionales
+  fiberGrams          Float?
+  ironMg              Float?
+  calciumMg           Float?
+  vitaminDMcg         Float?
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model FoodEntry {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  inputType       InputType
+  inputText       String?   // Texto original si aplica
+  imageUrl        String?   // URL imagen almacenada
+  barcode         String?   // Código de barras si aplica
+  
+  // Datos procesados
+  foods           Json      // Array de alimentos identificados
+  totalCalories   Float
+  macros          Json      // {protein, carbs, fat} en gramos
+  micros          Json?     // Vitaminas y minerales
+  
+  mealType        MealType
+  entryDate       DateTime  @default(now())
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([userId, entryDate])
+  @@index([entryDate])
+}
+
+model NutritionLog {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  date            DateTime  @db.Date
+  
+  totalCalories   Float
+  macros          Json      // {protein, carbs, fat}
+  micros          Json?     // Vitaminas y minerales
+  
+  // Análisis
+  deficits        Json?     // Déficits detectados
+  achievements    Json?     // Logros del día
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@unique([userId, date])
+  @@index([userId, date])
+}
+
+model Recommendation {
+  id                String    @id @default(uuid())
+  userId            String
+  
+  type              String    // meal, snack, supplement, adjustment
+  title             String
+  description       String
+  foods             Json      // Array de alimentos recomendados
+  expectedNutrition Json      // Nutrición esperada
+  reasoning         String    // Explicación en lenguaje natural
+  priority          String    // high, medium, low
+  
+  date              DateTime  @db.Date
+  viewed            Boolean   @default(false)
+  accepted          Boolean?
+  
+  createdAt         DateTime  @default(now())
+  
+  @@index([userId, date])
+}
+

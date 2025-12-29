@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutra | Inteligencia Nutricional</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Dashboard Header -->
+        <header class="app-header">
+            <div class="logo">NUTRA<span>.</span></div>
+            <div class="user-profile">
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <main class="dashboard">
+            <!-- Daily Summary Ring -->
+            <section class="summary-card glass">
+                <div class="kcal-ring">
+                    <svg viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="45" class="bg"></circle>
+                        <circle cx="50" cy="50" r="45" class="progress" id="kcalProgress"></circle>
+                    </svg>
+                    <div class="kcal-text">
+                        <span id="currentKcal">1,240</span>
+                        <small>de 2,200 kcal</small>
+                    </div>
+                </div>
+                <div class="daily-status">
+                    <h3>¡Buen ritmo!</h3>
+                    <p>Vas camino a tu objetivo de déficit.</p>
+                </div>
+            </section>
+
+            <!-- Macros Section -->
+            <section class="macros-grid">
+                <div class="macro-card glass" data-macro="protein">
+                    <div class="macro-label">Proteína</div>
+                    <div class="macro-value"><span id="proteinVal">85</span>g</div>
+                    <div class="macro-bar"><div class="fill" style="width: 65%;"></div></div>
+                </div>
+                <div class="macro-card glass" data-macro="carbs">
+                    <div class="macro-label">Carbos</div>
+                    <div class="macro-value"><span id="carbsVal">140</span>g</div>
+                    <div class="macro-bar"><div class="fill" style="width: 45%;"></div></div>
+                </div>
+                <div class="macro-card glass" data-macro="fats">
+                    <div class="macro-label">Grasas</div>
+                    <div class="macro-value"><span id="fatsVal">42</span>g</div>
+                    <div class="macro-bar"><div class="fill" style="width: 30%;"></div></div>
+                </div>
+            </section>
+
+            <!-- Intelligence / Alerts -->
+            <section class="insights-section">
+                <h2>Insights de Hoy</h2>
+                <div class="insight-card glass warning">
+                    <div class="icon">⚠️</div>
+                    <div class="content">
+                        <h4>Bajo en Hierro</h4>
+                        <p>Te falta un 30% para tu meta óptima diaria.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recommendation Section -->
+            <section class="recommendation-section">
+                <h2>¿Qué comer ahora?</h2>
+                <div class="promo-card glass gradient-bg">
+                    <div class="promo-content">
+                        <h3>Cena Equilibradora</h3>
+                        <p>Salmón a la plancha con espárragos.</p>
+                        <div class="benefits">+32g Proteína • Omega 3</div>
+                    </div>
+                    <button class="btn-action">Ver receta</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Fixed Logging Bar -->
+        <nav class="logging-bar glass">
+            <div class="input-container">
+                <input type="text" id="foodInput" placeholder="¿Qué has comido? (ej. Pasta con pollo)">
+                <div class="action-icons">
+                     <button class="icon-btn" title="Voz">🎤</button>
+                     <button class="icon-btn" title="Foto">📷</button>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <script type="module" src="/main.js"></script>
+</body>
+</html>
